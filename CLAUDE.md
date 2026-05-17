@@ -128,3 +128,4 @@
 | 2026-05-17 | 작업 규칙(W1-W6) + 제약 사항(C1-C12) 추가 | CLAUDE.md | research.md 핵심을 세션 상시 컨텍스트로 |
 | 2026-05-17 | 디자인 시스템 design.md 신규 (20장: 토큰·컴포넌트·접근성·Tailwind 설정 포함) | design.md | 전문 디자이너 관점 단일 진실 출처 |
 | 2026-05-17 | plan.md에 디자인 작업·디자인 참조 컬럼·디자인 검토 게이트 통합 | plan.md | design.md를 주차별 산출물과 연결 |
+| 2026-05-17 | 1주차 전체 구현 (1.1.1~1.1.13): Next.js 15 스캐폴딩, Tailwind 토큰, shadcn/ui, Supabase Auth/migration #1, 미들웨어, 인증·교사·학생 페이지, /design 갤러리 | app/, components/, lib/, supabase/ | plan.md 1주차 완료 |

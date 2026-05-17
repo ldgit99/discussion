@@ -1,0 +1,35 @@
+# Supabase 로컬 개발 설정 — 마이그레이션 적용 시 참조
+# Dashboard와 동기화하려면 `supabase link --project-ref <ref>` 후 `supabase db push`
+
+project_id = "discussion"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 16
+
+[realtime]
+enabled = true
+
+[auth]
+enabled = true
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["http://localhost:3000/auth/callback"]
+jwt_expiry = 3600
+enable_signup = true
+enable_anonymous_sign_ins = false
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = true
+enable_confirmations = false  # 로컬 개발 편의: 운영은 true 권장
+
+[storage]
+enabled = false  # MVP 단계에서는 미사용
