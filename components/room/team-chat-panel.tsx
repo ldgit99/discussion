@@ -6,7 +6,6 @@ import { useTeamMessages } from '@/lib/realtime/use-team-messages';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { cn } from '@/lib/utils';
 import type { Message } from '@/lib/db/types';
 
 type Props = {
@@ -14,8 +13,7 @@ type Props = {
   myNickname: string;
 };
 
-// design.md §11 발화자 위계 + §13.3 좌측 채팅
-export function ChatPanel({ roomId, myNickname }: Props) {
+export function TeamChatPanel({ roomId, myNickname }: Props) {
   const { messages, loading, sendMessage } = useTeamMessages(roomId);
   const [draft, setDraft] = useState('');
   const [sending, setSending] = useState(false);
@@ -36,12 +34,7 @@ export function ChatPanel({ roomId, myNickname }: Props) {
   }
 
   return (
-    <section className="border-r border-neutral-200 bg-neutral-0 flex flex-col min-h-0">
-      <div className="px-4 py-3 border-b border-neutral-200 text-sm font-medium text-neutral-600 flex items-center gap-2 shrink-0">
-        <Users className="h-4 w-4" />
-        팀 채팅
-      </div>
-
+    <div className="flex flex-col h-full min-h-0 bg-neutral-0">
       <ScrollArea className="flex-1 min-h-0">
         <div className="p-4 space-y-3">
           {loading ? (
@@ -50,7 +43,7 @@ export function ChatPanel({ roomId, myNickname }: Props) {
             <EmptyChat />
           ) : (
             messages.map((m) => (
-              <MessageBubble key={m.id} message={m} mine={m.author_nickname === myNickname} />
+              <MessageBubble key={m.id} message={m} mine={m.author_nickname === myNickname} aiLabel="AI 진행자" />
             ))
           )}
           <div ref={endRef} />
@@ -71,7 +64,7 @@ export function ChatPanel({ roomId, myNickname }: Props) {
           <Send className="h-4 w-4" />
         </Button>
       </form>
-    </section>
+    </div>
   );
 }
 
@@ -79,12 +72,20 @@ function EmptyChat() {
   return (
     <div className="flex flex-col items-center justify-center text-center py-12 gap-3 text-neutral-600">
       <Sparkles className="h-8 w-8 text-ai-500" />
-      <p className="text-sm">아직 메시지가 없어요. 첫 의견을 남겨보세요.</p>
+      <p className="text-sm">AI가 토의를 시작하면 안내해줄 거예요.</p>
     </div>
   );
 }
 
-function MessageBubble({ message, mine }: { message: Message; mine: boolean }) {
+export function MessageBubble({
+  message,
+  mine,
+  aiLabel,
+}: {
+  message: Message;
+  mine: boolean;
+  aiLabel: string;
+}) {
   const isAi = message.message_type !== 'utterance';
   if (isAi) {
     return (
@@ -93,7 +94,7 @@ function MessageBubble({ message, mine }: { message: Message; mine: boolean }) {
           <Sparkles className="h-4 w-4 text-ai-500" />
         </div>
         <div className="flex-1 space-y-1">
-          <div className="text-2xs font-semibold text-ai-text">AI 진행자</div>
+          <div className="text-2xs font-semibold text-ai-text">{aiLabel}</div>
           <div className="rounded-lg bg-ai-50 border border-ai-200 px-3 py-2 text-sm text-neutral-800 whitespace-pre-wrap">
             {message.content}
           </div>
@@ -120,9 +121,7 @@ function MessageBubble({ message, mine }: { message: Message; mine: boolean }) {
         <AvatarFallback>{initials(message.author_nickname ?? '?')}</AvatarFallback>
       </Avatar>
       <div className="flex-1 space-y-1">
-        <div className="text-2xs font-semibold text-neutral-600">
-          {message.author_nickname}
-        </div>
+        <div className="text-2xs font-semibold text-neutral-600">{message.author_nickname}</div>
         <div className="rounded-lg bg-neutral-50 border border-neutral-200 px-3 py-2 text-sm text-neutral-800 max-w-[85%] whitespace-pre-wrap">
           {message.content}
         </div>
@@ -133,7 +132,6 @@ function MessageBubble({ message, mine }: { message: Message; mine: boolean }) {
 }
 
 function initials(nick: string): string {
-  // 닉네임이 "반-번호-이름" 형태면 마지막 이름의 첫 글자
   const parts = nick.split('-');
   const last = parts[parts.length - 1] ?? nick;
   return last.slice(0, 1);

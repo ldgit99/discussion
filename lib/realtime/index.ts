@@ -5,3 +5,5 @@ export { useBoardSync } from './use-board-sync';
 export { usePresence } from './use-presence';
 export { useConsensusSync } from './use-consensus-sync';
 export { useSessionRealtime } from './use-session-realtime';
+export { usePersonalMessages } from './use-personal-messages';
+export { useMyParticipant } from './use-my-participant';
