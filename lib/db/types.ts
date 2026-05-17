@@ -18,9 +18,38 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      sessions: {
+        Row: {
+          id: string;
+          teacher_id: string;
+          topic: string;
+          total_students: number;
+          group_size: number;
+          num_rooms: number;
+          time_limit_minutes: number | null;
+          stage: 'waiting' | 'active' | 'closed';
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          teacher_id: string;
+          topic: string;
+          total_students: number;
+          group_size?: number;
+          num_rooms: number;
+          time_limit_minutes?: number | null;
+          stage?: 'waiting' | 'active' | 'closed';
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database['public']['Tables']['sessions']['Insert']>;
+        Relationships: [];
+      };
       rooms: {
         Row: {
           id: string;
+          session_id: string;
           room_code: string;
           topic: string;
           teacher_id: string;
@@ -40,6 +69,7 @@ export type Database = {
         };
         Insert: {
           id?: string;
+          session_id: string;
           room_code: string;
           topic: string;
           teacher_id: string;
@@ -57,25 +87,7 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
-        Update: {
-          id?: string;
-          room_code?: string;
-          topic?: string;
-          teacher_id?: string;
-          stage?:
-            | 'waiting'
-            | 'intro'
-            | 'turn_taking'
-            | 'discussion'
-            | 'consensus'
-            | 'submitted'
-            | 'closed';
-          time_limit_minutes?: number | null;
-          min_participants?: number;
-          max_participants?: number;
-          created_at?: string;
-          updated_at?: string;
-        };
+        Update: Partial<Database['public']['Tables']['rooms']['Insert']>;
         Relationships: [];
       };
       participants: {
@@ -154,6 +166,21 @@ export type Database = {
         Args: Record<string, never>;
         Returns: string;
       };
+      create_session_with_rooms: {
+        Args: {
+          p_topic: string;
+          p_total_students: number;
+          p_group_size?: number;
+          p_time_limit_minutes?: number;
+        };
+        Returns: {
+          session_id: string;
+          room_id: string;
+          room_code: string;
+          room_index: number;
+          capacity: number;
+        }[];
+      };
     };
     Enums: { [_ in never]: never };
     CompositeTypes: { [_ in never]: never };
@@ -161,6 +188,7 @@ export type Database = {
 };
 
 // 편의 타입 alias
+export type Session = Database['public']['Tables']['sessions']['Row'];
 export type Room = Database['public']['Tables']['rooms']['Row'];
 export type Participant = Database['public']['Tables']['participants']['Row'];
 export type PersonalChatConsent =

@@ -13,10 +13,13 @@
 ### 1.3 사용 맥락
 | 단계 | 주체 | 역할 |
 |------|------|------|
-| 토의 준비 | 교사 | 주제 설정, 사전 지도, 자료 안내 |
-| 토의 실행 | 학생 2-5인 + AI | 개인 사고 확장, 의견 공유, 비교·조정, 합의 도출 |
-| 토의 모니터링 | 교사 | 대시보드로 모둠별 진행 상황 확인 및 개입 |
+| 수업 준비 | 교사 | **수업(Session) 1개 만들기** — 학생 수·모둠당 인원 입력 → 모둠(Room) N개 자동 생성 + 코드 N개 발급 |
+| 토의 준비 | 교사 | 주제 설정, 사전 지도, **모둠 코드 학생에게 배포** |
+| 토의 실행 | 학생 2-5인/모둠 + AI | 개인 사고 확장, 의견 공유, 비교·조정, 합의 도출 |
+| 토의 모니터링 | 교사 | 대시보드로 **수업 전체 + 모둠별** 진행 상황 확인 및 개입 |
 | 토의 평가 | 교사 | 최종 교육적 판단 및 수업 조율 |
+
+**Session ↔ Room 구조**: 한 반 30명·모둠당 5명이면 한 수업이 6개 모둠을 자동으로 만듦. 교사는 수업 단위로 관리하고, 학생은 모둠 코드로 입장.
 
 ---
 
@@ -428,7 +431,8 @@
 
 | 테이블 | 주요 컬럼 |
 |--------|----------|
-| `rooms` | id, room_code, topic, teacher_id, stage, time_limit, min_participants(2), max_participants(5), created_at |
+| `sessions` | id, teacher_id, topic, total_students, group_size(2-5), num_rooms, time_limit_minutes, stage(waiting/active/closed), created_at, updated_at |
+| `rooms` | id, **session_id (FK)**, room_code, topic, teacher_id, stage, time_limit, min_participants(2), max_participants(5), created_at |
 | `participants` | id, room_id, user_id (FK → auth.users), role (teacher/student), nickname, turn_order, joined_at |
 | `messages` | id, room_id, channel (`team` / `personal:{participant_id}`), author_id (학생 또는 AI), content, message_type (utterance/ai_facilitation/ai_coaching), created_at |
 | `opinions` | id, room_id, author_id, content, evidence, shared_from_personal (bool), created_at, updated_at |

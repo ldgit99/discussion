@@ -73,8 +73,10 @@
 - 개인 채팅 LLM 호출 컨텍스트에 다른 학생 발화·닉네임 포함 금지.
 - 개인 → 팀 전파는 학생 명시 "팀에 공유" 액션만 (`opinions.shared_from_personal=true`).
 
-### C4. 모둠 인원 — [research.md §1.1, §9.4](./research.md)
-**2-5명** 가변. min(2) 미만이면 토의 시작 차단, max(5) 초과 입장 차단. UI에 `n/N` 형태로 표기.
+### C4. 모둠 인원 및 수업 구조 — [research.md §1.1, §1.3, §9.4](./research.md)
+- 모둠(Room)당 **2-5명** 가변. min(2) 미만이면 토의 시작 차단, max(5) 초과 입장 차단. UI에 `n/N` 형태로 표기.
+- **모든 모둠은 수업(Session)에 속함**. 단독 모둠 생성 금지 — `rooms.session_id` NOT NULL.
+- 한 수업 = 한 차시 토의. 교사가 수업 1개 만들면 학생 수·모둠당 인원 입력에 따라 모둠 N개 + 코드 N개 자동 발급.
 
 ### C5. 심리적 안전감 — [research.md §5.3](./research.md)
 - **부정 피드백 → 비공개** (개인 알림). **긍정 피드백 → 공개**.
@@ -129,3 +131,5 @@
 | 2026-05-17 | 디자인 시스템 design.md 신규 (20장: 토큰·컴포넌트·접근성·Tailwind 설정 포함) | design.md | 전문 디자이너 관점 단일 진실 출처 |
 | 2026-05-17 | plan.md에 디자인 작업·디자인 참조 컬럼·디자인 검토 게이트 통합 | plan.md | design.md를 주차별 산출물과 연결 |
 | 2026-05-17 | 1주차 전체 구현 (1.1.1~1.1.13): Next.js 15 스캐폴딩, Tailwind 토큰, shadcn/ui, Supabase Auth/migration #1, 미들웨어, 인증·교사·학생 페이지, /design 갤러리 | app/, components/, lib/, supabase/ | plan.md 1주차 완료 |
+| 2026-05-17 | DB fix: generate_room_code 6자 보장 + security definer | supabase/migrations/20260517000002 | "방 코드를 만들지 못했어요" 에러 해소 |
+| 2026-05-17 | Session(수업) 개념 도입 — 모둠 일괄 생성. /teacher/sessions/{new,[id]} 추가, /teacher/rooms/new 폐기 | supabase/migrations/20260517000003, app/(app)/teacher/sessions/* | 한 반 20-30명·여러 반 교사의 모둠별 수동 생성 부담 해소 |
