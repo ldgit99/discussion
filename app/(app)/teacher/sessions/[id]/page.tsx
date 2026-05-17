@@ -25,7 +25,7 @@ export default async function SessionDetailPage({
     )
     .eq('id', id)
     .eq('teacher_id', user!.id)
-    .single();
+    .maybeSingle();
 
   if (!session) notFound();
 
