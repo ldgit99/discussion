@@ -1,11 +1,12 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowLeft, Printer, Users, Clock, Layers } from 'lucide-react';
+import { ArrowLeft, Users, Clock, Layers } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
-import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { RoomCodeGrid } from './room-code-grid';
+import { PrintButton } from './print-button';
 
 export default async function SessionDetailPage({
   params,
@@ -80,17 +81,7 @@ export default async function SessionDetailPage({
               )}
             </div>
           </div>
-          <Button
-            variant="outline"
-            className="print:hidden"
-            onClick={undefined}
-            asChild
-          >
-            <a href="#" onClick={(e) => { e.preventDefault(); if (typeof window !== 'undefined') window.print(); }}>
-              <Printer className="h-4 w-4" />
-              인쇄·저장
-            </a>
-          </Button>
+          <PrintButton />
         </div>
       </header>
 
