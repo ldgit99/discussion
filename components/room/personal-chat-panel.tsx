@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { MessageBubble } from './team-chat-panel';
+import { ConsentDialog } from './consent-dialog';
 
 type Props = {
   roomId: string;
@@ -69,11 +70,14 @@ export function PersonalChatPanel({ roomId, participantId, myNickname }: Props) 
 
   return (
     <div className="flex flex-col h-full min-h-0 bg-personal-bg border-l border-personal-border">
-      <div className="px-4 py-2 border-b border-personal-border bg-personal-badge-bg/40 shrink-0 flex items-center gap-2">
-        <Lock className="h-4 w-4 text-personal-accent" />
-        <Badge variant="personal" className="text-xs">
-          🔒 나만 보이는 공간
-        </Badge>
+      <div className="px-4 py-2 border-b border-personal-border bg-personal-badge-bg/40 shrink-0 flex items-center gap-2 justify-between">
+        <div className="flex items-center gap-2">
+          <Lock className="h-4 w-4 text-personal-accent" />
+          <Badge variant="personal" className="text-xs">
+            🔒 나만 보이는 공간
+          </Badge>
+        </div>
+        <ConsentDialog roomId={roomId} participantId={participantId} />
       </div>
 
       <ScrollArea className="flex-1 min-h-0">

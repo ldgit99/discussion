@@ -5,6 +5,7 @@ import { Users, CheckCircle2 } from 'lucide-react';
 import { useSessionRealtime } from '@/lib/realtime/use-session-realtime';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { ExportButtons } from './export-buttons';
 
 type Room = {
   id: string;
@@ -86,12 +87,20 @@ export function SessionRealtime({ sessionId, topic, totalStudents, rooms }: Prop
 
       <Card className="print:hidden">
         <div className="p-6 space-y-3">
-          <h2 className="text-lg font-semibold text-neutral-900 flex items-center gap-2">
-            팀별 최종 토의 결과
-            <Badge variant="muted">
-              {submittedCount}/{rooms.length} 제출
-            </Badge>
-          </h2>
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-lg font-semibold text-neutral-900 flex items-center gap-2">
+              팀별 최종 토의 결과
+              <Badge variant="muted">
+                {submittedCount}/{rooms.length} 제출
+              </Badge>
+            </h2>
+            <ExportButtons
+              sessionId={sessionId}
+              topic={topic}
+              rooms={rooms.map((r) => ({ id: r.id, room_code: r.room_code }))}
+              results={results}
+            />
+          </div>
           {results.length === 0 ? (
             <p className="text-sm text-neutral-400 py-4">아직 제출된 결과가 없어요.</p>
           ) : (
