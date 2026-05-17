@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState, useTransition, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { createClient } from '@/lib/supabase/client';
@@ -9,20 +9,34 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 
-type Step = 'code' | 'nickname';
+type Step = 'code' | 'confirm';
+
+type RoomInfo = {
+  id: string;
+  topic: string;
+  current: number;
+  max: number;
+};
 
 export function JoinForm() {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [step, setStep] = useState<Step>('code');
   const [code, setCode] = useState('');
-  const [nickname, setNickname] = useState('');
-  const [roomInfo, setRoomInfo] = useState<{
-    id: string;
-    topic: string;
-    current: number;
-    max: number;
-  } | null>(null);
+  const [roomInfo, setRoomInfo] = useState<RoomInfo | null>(null);
+  const [nickname, setNickname] = useState<string | null>(null);
+
+  // 로그인된 학생의 자동 닉네임 가져오기
+  useEffect(() => {
+    (async () => {
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      const nick = user?.user_metadata?.nickname as string | undefined;
+      setNickname(nick ?? null);
+    })();
+  }, []);
 
   async function handleCodeSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -55,19 +69,17 @@ export function JoinForm() {
         current: room.current_count,
         max: room.max_participants,
       });
-      setStep('nickname');
+      setStep('confirm');
     });
   }
 
-  async function handleNicknameSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const cleanNick = nickname.trim();
-    if (cleanNick.length < 1 || cleanNick.length > 20) {
-      toast.error('닉네임은 1자에서 20자 사이로 적어주세요.');
+  async function handleJoin() {
+    if (!roomInfo) return;
+    if (!nickname) {
+      toast.error('학생 정보가 완성되지 않았어요. 회원가입을 다시 해주세요.');
+      router.push('/signup');
       return;
     }
-
-    if (!roomInfo) return;
 
     startTransition(async () => {
       const supabase = createClient();
@@ -84,19 +96,21 @@ export function JoinForm() {
         room_id: roomInfo.id,
         user_id: user.id,
         role: 'student',
-        nickname: cleanNick,
+        nickname,
       });
 
       if (error) {
         if (error.code === '23505') {
-          toast.error('이미 누가 쓰는 닉네임이에요. 다른 이름으로 해주세요.');
-        } else {
-          toast.error('입장이 안 됐어요. 다시 시도해주세요.');
+          // unique constraint: 같은 방에 이미 입장됨
+          toast.success('이미 입장된 모둠이에요. 바로 이동할게요.');
+          router.push(`/room/${roomInfo.id}`);
+          return;
         }
+        toast.error('입장이 안 됐어요. 다시 시도해주세요.');
         return;
       }
 
-      toast.success(`'${roomInfo.topic}' 방에 입장했어요!`);
+      toast.success(`'${roomInfo.topic}' 모둠에 입장했어요!`);
       router.push(`/room/${roomInfo.id}`);
     });
   }
@@ -106,6 +120,12 @@ export function JoinForm() {
       <form onSubmit={handleCodeSubmit}>
         <Card>
           <CardContent className="p-6 space-y-5">
+            {nickname && (
+              <p className="text-sm text-neutral-600 text-center">
+                나는 <strong className="text-brand-700">{nickname}</strong> 으로 참여해요.
+              </p>
+            )}
+
             <div className="space-y-2">
               <Label htmlFor="code" className="sr-only">
                 방 코드
@@ -141,54 +161,55 @@ export function JoinForm() {
     );
   }
 
+  // confirm step
   return (
-    <form onSubmit={handleNicknameSubmit}>
-      <Card>
-        <CardContent className="p-6 space-y-5">
-          <div className="space-y-1 p-3 rounded-lg bg-brand-50">
-            <p className="text-xs text-brand-900 font-medium">토의 주제</p>
-            <p className="text-base font-semibold text-neutral-900">{roomInfo!.topic}</p>
-            <p className="text-xs text-neutral-600">
-              현재 {roomInfo!.current}/{roomInfo!.max}명 입장
+    <Card>
+      <CardContent className="p-6 space-y-5">
+        <div className="space-y-1 p-3 rounded-lg bg-brand-50">
+          <p className="text-xs text-brand-900 font-medium">토의 주제</p>
+          <p className="text-base font-semibold text-neutral-900">{roomInfo!.topic}</p>
+          <p className="text-xs text-neutral-600">
+            현재 {roomInfo!.current}/{roomInfo!.max}명 입장
+          </p>
+        </div>
+
+        <div className="space-y-2">
+          <p className="text-sm text-neutral-600">모둠에 표시될 이름</p>
+          <div className="rounded-lg border border-neutral-200 px-4 py-3 bg-neutral-50">
+            <p className="text-lg font-semibold text-brand-700">
+              {nickname ?? '이름 정보 없음'}
             </p>
           </div>
+          {!nickname && (
+            <p className="text-xs text-warning-500">
+              학생 정보(반/번호/이름)가 없어요. 회원가입을 다시 해주세요.
+            </p>
+          )}
+        </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="nickname">모둠에서 쓸 이름</Label>
-            <Input
-              id="nickname"
-              autoComplete="off"
-              maxLength={20}
-              value={nickname}
-              onChange={(e) => setNickname(e.target.value)}
-              placeholder="예: 모둠지기"
-              autoFocus
-            />
-            <p className="text-xs text-neutral-400">실명 대신 닉네임을 써주세요.</p>
-          </div>
-
-          <div className="flex gap-3 pt-2">
-            <Button
-              type="button"
-              variant="outline"
-              className="flex-1"
-              onClick={() => {
-                setStep('code');
-                setRoomInfo(null);
-              }}
-            >
-              뒤로
-            </Button>
-            <Button
-              type="submit"
-              className="flex-1"
-              disabled={isPending || nickname.trim().length === 0}
-            >
-              {isPending ? '입장 중…' : '입장하기'}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    </form>
+        <div className="flex gap-3 pt-2">
+          <Button
+            type="button"
+            variant="outline"
+            className="flex-1"
+            onClick={() => {
+              setStep('code');
+              setRoomInfo(null);
+              setCode('');
+            }}
+          >
+            뒤로
+          </Button>
+          <Button
+            type="button"
+            className="flex-1"
+            onClick={handleJoin}
+            disabled={isPending || !nickname}
+          >
+            {isPending ? '입장 중…' : '입장하기'}
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
