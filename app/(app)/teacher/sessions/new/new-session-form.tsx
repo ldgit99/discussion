@@ -43,14 +43,21 @@ export function NewSessionForm() {
         p_time_limit_minutes: timeLimit,
       });
 
-      if (error || !data || data.length === 0) {
+      if (error || !data) {
+        console.error('create_session_with_rooms error:', error);
         toast.error('수업을 만들지 못했어요. 잠시 후 다시 시도해주세요.');
         return;
       }
 
-      const sessionId = data[0].session_id;
-      toast.success(`수업이 만들어졌어요! 모둠 ${data.length}개`);
-      router.push(`/teacher/sessions/${sessionId}`);
+      // RETURNS JSONB: { session_id, num_rooms, rooms: [...] }
+      const result = data as {
+        session_id: string;
+        num_rooms: number;
+        rooms: Array<{ room_id: string; room_code: string; room_index: number; capacity: number }>;
+      };
+
+      toast.success(`수업이 만들어졌어요! 모둠 ${result.num_rooms}개`);
+      router.push(`/teacher/sessions/${result.session_id}`);
     });
   }
 

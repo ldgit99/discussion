@@ -173,13 +173,17 @@ export type Database = {
           p_group_size?: number;
           p_time_limit_minutes?: number;
         };
+        // returns jsonb: { session_id, num_rooms, rooms: [...] }
         Returns: {
           session_id: string;
-          room_id: string;
-          room_code: string;
-          room_index: number;
-          capacity: number;
-        }[];
+          num_rooms: number;
+          rooms: Array<{
+            room_id: string;
+            room_code: string;
+            room_index: number;
+            capacity: number;
+          }>;
+        };
       };
     };
     Enums: { [_ in never]: never };
