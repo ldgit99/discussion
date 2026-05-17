@@ -242,6 +242,32 @@ export type Database = {
         Update: Partial<Database['public']['Tables']['consensus_results']['Insert']>;
         Relationships: [];
       };
+      attitude_flags: {
+        Row: {
+          id: string;
+          room_id: string;
+          target_participant_id: string | null;
+          message_id: string | null;
+          severity: 'low' | 'medium' | 'high';
+          raw_text: string;
+          detected_by: 'keyword' | 'moderation_api' | 'manual';
+          action_taken: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          room_id: string;
+          target_participant_id?: string | null;
+          message_id?: string | null;
+          severity?: 'low' | 'medium' | 'high';
+          raw_text: string;
+          detected_by?: 'keyword' | 'moderation_api' | 'manual';
+          action_taken?: string | null;
+          created_at?: string;
+        };
+        Update: Partial<Database['public']['Tables']['attitude_flags']['Insert']>;
+        Relationships: [];
+      };
       personal_chat_consent: {
         Row: {
           id: string;
