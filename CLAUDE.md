@@ -133,3 +133,7 @@
 | 2026-05-17 | 1주차 전체 구현 (1.1.1~1.1.13): Next.js 15 스캐폴딩, Tailwind 토큰, shadcn/ui, Supabase Auth/migration #1, 미들웨어, 인증·교사·학생 페이지, /design 갤러리 | app/, components/, lib/, supabase/ | plan.md 1주차 완료 |
 | 2026-05-17 | DB fix: generate_room_code 6자 보장 + security definer | supabase/migrations/20260517000002 | "방 코드를 만들지 못했어요" 에러 해소 |
 | 2026-05-17 | Session(수업) 개념 도입 — 모둠 일괄 생성. /teacher/sessions/{new,[id]} 추가, /teacher/rooms/new 폐기 | supabase/migrations/20260517000003, app/(app)/teacher/sessions/* | 한 반 20-30명·여러 반 교사의 모둠별 수동 생성 부담 해소 |
+| 2026-05-17 | DB fix: create_session_with_rooms를 RETURNS JSONB로 재작성 | supabase/migrations/20260517000004 | PostgREST RETURNS TABLE 캐시 인식 실패 우회 |
+| 2026-05-17 | DB fix: RLS 무한 재귀 해소 — SECURITY DEFINER 헬퍼 함수 4개로 멤버십 검사 격리 | supabase/migrations/20260517000005 | 자기참조 RLS로 인한 42P17 에러 해결 |
+| 2026-05-17 | 학생 가입에 반/번호/이름 추가, 닉네임 자동 생성("반-번호-이름") | signup-form, join-form | 학교 실사용 시나리오 반영 |
+| 2026-05-17 | 2주차 전체 구현 (2.1.1~2.1.13): messages/opinions/board_items/consensus_results 4개 테이블, Realtime 훅 6종, ChatPanel/BoardPanel/ResultStrip/OpinionCard 컴포넌트, /room/[id] 통합, 교사 대시보드 실시간 결과 보드 | supabase/migrations/20260517000006, lib/realtime/*, components/room/*, app/(app)/room/[id]/* | plan.md 2주차 완료 |

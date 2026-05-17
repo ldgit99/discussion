@@ -120,6 +120,108 @@ export type Database = {
         };
         Relationships: [];
       };
+      messages: {
+        Row: {
+          id: string;
+          room_id: string;
+          channel: string;
+          author_id: string | null;
+          author_nickname: string | null;
+          content: string;
+          message_type: 'utterance' | 'ai_facilitation' | 'ai_coaching' | 'system';
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          room_id: string;
+          channel?: string;
+          author_id?: string | null;
+          author_nickname?: string | null;
+          content: string;
+          message_type?: 'utterance' | 'ai_facilitation' | 'ai_coaching' | 'system';
+          created_at?: string;
+        };
+        Update: Partial<Database['public']['Tables']['messages']['Insert']>;
+        Relationships: [];
+      };
+      opinions: {
+        Row: {
+          id: string;
+          room_id: string;
+          author_id: string;
+          author_nickname: string;
+          content: string;
+          evidence: string | null;
+          shared_from_personal: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          room_id: string;
+          author_id: string;
+          author_nickname: string;
+          content: string;
+          evidence?: string | null;
+          shared_from_personal?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database['public']['Tables']['opinions']['Insert']>;
+        Relationships: [];
+      };
+      board_items: {
+        Row: {
+          id: string;
+          room_id: string;
+          type: 'compare' | 'criteria' | 'issue' | 'representative';
+          position: number;
+          content: string;
+          updated_by: string | null;
+          updated_by_nickname: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          room_id: string;
+          type: 'compare' | 'criteria' | 'issue' | 'representative';
+          position?: number;
+          content?: string;
+          updated_by?: string | null;
+          updated_by_nickname?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database['public']['Tables']['board_items']['Insert']>;
+        Relationships: [];
+      };
+      consensus_results: {
+        Row: {
+          id: string;
+          room_id: string;
+          session_id: string;
+          representative_opinion: string;
+          reason: string | null;
+          improvements: string | null;
+          action_plan: string | null;
+          submitted_by: string | null;
+          submitted_at: string;
+        };
+        Insert: {
+          id?: string;
+          room_id: string;
+          session_id: string;
+          representative_opinion: string;
+          reason?: string | null;
+          improvements?: string | null;
+          action_plan?: string | null;
+          submitted_by?: string | null;
+          submitted_at?: string;
+        };
+        Update: Partial<Database['public']['Tables']['consensus_results']['Insert']>;
+        Relationships: [];
+      };
       personal_chat_consent: {
         Row: {
           id: string;
@@ -195,5 +297,9 @@ export type Database = {
 export type Session = Database['public']['Tables']['sessions']['Row'];
 export type Room = Database['public']['Tables']['rooms']['Row'];
 export type Participant = Database['public']['Tables']['participants']['Row'];
+export type Message = Database['public']['Tables']['messages']['Row'];
+export type Opinion = Database['public']['Tables']['opinions']['Row'];
+export type BoardItem = Database['public']['Tables']['board_items']['Row'];
+export type ConsensusResult = Database['public']['Tables']['consensus_results']['Row'];
 export type PersonalChatConsent =
   Database['public']['Tables']['personal_chat_consent']['Row'];
