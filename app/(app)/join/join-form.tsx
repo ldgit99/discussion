@@ -100,13 +100,23 @@ export function JoinForm() {
       });
 
       if (error) {
+        console.error('[join] participants insert failed:', {
+          code: error.code,
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          user_id: user.id,
+          room_id: roomInfo.id,
+          nickname,
+          user_meta_role: user.user_metadata?.role,
+        });
         if (error.code === '23505') {
           // unique constraint: 같은 방에 이미 입장됨
           toast.success('이미 입장된 모둠이에요. 바로 이동할게요.');
           router.push(`/room/${roomInfo.id}`);
           return;
         }
-        toast.error('입장이 안 됐어요. 다시 시도해주세요.');
+        toast.error(`입장 실패: ${error.message}`);
         return;
       }
 
