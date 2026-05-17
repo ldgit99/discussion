@@ -85,6 +85,7 @@ export function useTeamMessages(roomId: string | null) {
         author_nickname: nickname,
         content,
         message_type: 'utterance',
+        ai_feature: null,
         created_at: new Date().toISOString(),
       };
       setMessages((prev) => [...prev, optimistic]);

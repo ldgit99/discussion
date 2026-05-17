@@ -129,6 +129,16 @@ export type Database = {
           author_nickname: string | null;
           content: string;
           message_type: 'utterance' | 'ai_facilitation' | 'ai_coaching' | 'system';
+          ai_feature:
+            | 'facilitation'
+            | 'summary'
+            | 'compare'
+            | 'evidence_check'
+            | 'question_gen'
+            | 'attitude_check'
+            | 'consensus_aid'
+            | 'coaching'
+            | null;
           created_at: string;
         };
         Insert: {
@@ -139,6 +149,16 @@ export type Database = {
           author_nickname?: string | null;
           content: string;
           message_type?: 'utterance' | 'ai_facilitation' | 'ai_coaching' | 'system';
+          ai_feature?:
+            | 'facilitation'
+            | 'summary'
+            | 'compare'
+            | 'evidence_check'
+            | 'question_gen'
+            | 'attitude_check'
+            | 'consensus_aid'
+            | 'coaching'
+            | null;
           created_at?: string;
         };
         Update: Partial<Database['public']['Tables']['messages']['Insert']>;

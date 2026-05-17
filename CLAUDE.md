@@ -137,3 +137,5 @@
 | 2026-05-17 | DB fix: RLS 무한 재귀 해소 — SECURITY DEFINER 헬퍼 함수 4개로 멤버십 검사 격리 | supabase/migrations/20260517000005 | 자기참조 RLS로 인한 42P17 에러 해결 |
 | 2026-05-17 | 학생 가입에 반/번호/이름 추가, 닉네임 자동 생성("반-번호-이름") | signup-form, join-form | 학교 실사용 시나리오 반영 |
 | 2026-05-17 | 2주차 전체 구현 (2.1.1~2.1.13): messages/opinions/board_items/consensus_results 4개 테이블, Realtime 훅 6종, ChatPanel/BoardPanel/ResultStrip/OpinionCard 컴포넌트, /room/[id] 통합, 교사 대시보드 실시간 결과 보드 | supabase/migrations/20260517000006, lib/realtime/*, components/room/*, app/(app)/room/[id]/* | plan.md 2주차 완료 |
+| 2026-05-17 | DB fix: participants INSERT 정책 SECURITY DEFINER 헬퍼로 캡슐화 (403 해소) | supabase/migrations/20260517000007 | 학생 [입장하기] 차단 문제 해결 |
+| 2026-05-17 | 3주차 전체 구현 (3.1.1~3.1.15): OpenAI provider/moderation/guards, 5개 AI 기능(facilitation/summary/compare/evidence-check/consensus-aid), Route Handler 5종, AIPanel·AiTriggers 컴포넌트, messages.ai_feature 컬럼 + 자동 트리거 (room_start, evidence_request) | supabase/migrations/20260517000008, lib/ai/*, lib/supabase/admin.ts, app/api/ai/*, components/room/ai-* | plan.md 3주차 완료 |
