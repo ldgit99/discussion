@@ -12,15 +12,27 @@ export default function SignupPage() {
 
       <SignupForm />
 
-      <p className="text-center text-sm text-neutral-600">
-        이미 계정이 있나요?{' '}
-        <Link
-          href="/login"
-          className="text-brand-600 font-medium underline-offset-4 hover:underline"
-        >
-          로그인
-        </Link>
-      </p>
+      <div className="space-y-2 text-center text-sm text-neutral-600">
+        <p>
+          이미 계정이 있나요?{' '}
+          <Link
+            href="/login"
+            className="text-brand-600 font-medium underline-offset-4 hover:underline"
+          >
+            로그인
+          </Link>
+        </p>
+        <p className="text-xs text-neutral-500">
+          선생님이 ID·비밀번호를 나눠줬다면 그것으로{' '}
+          <Link
+            href="/login"
+            className="text-brand-600 font-medium underline-offset-4 hover:underline"
+          >
+            바로 로그인
+          </Link>
+          하세요.
+        </p>
+      </div>
     </div>
   );
 }

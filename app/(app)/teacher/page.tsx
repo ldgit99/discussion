@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Plus, GitCompare } from 'lucide-react';
+import { Plus, GitCompare, GraduationCap } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -59,7 +59,13 @@ export default async function TeacherDashboardPage() {
             한 수업을 만들면 모둠 코드가 자동으로 나뉘어요. 반별로 그룹핑됩니다.
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          <Button asChild variant="outline">
+            <Link href="/teacher/classes">
+              <GraduationCap className="h-4 w-4" />
+              학급 명단
+            </Link>
+          </Button>
           <Button asChild variant="outline">
             <Link href="/teacher/compare">
               <GitCompare className="h-4 w-4" />
