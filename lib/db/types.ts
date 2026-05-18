@@ -244,6 +244,51 @@ export type Database = {
         Update: Partial<Database['public']['Tables']['consensus_results']['Insert']>;
         Relationships: [];
       };
+      classes: {
+        Row: {
+          id: string;
+          teacher_id: string;
+          grade: number;
+          class_num: number;
+          label: string;
+          name: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          teacher_id: string;
+          grade: number;
+          class_num: number;
+          name?: string | null;
+          created_at?: string;
+        };
+        Update: Partial<Database['public']['Tables']['classes']['Insert']>;
+        Relationships: [];
+      };
+      roster_students: {
+        Row: {
+          id: string;
+          class_id: string;
+          student_num: number;
+          name: string;
+          user_id: string | null;
+          generated_email: string | null;
+          account_issued_at: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          class_id: string;
+          student_num: number;
+          name: string;
+          user_id?: string | null;
+          generated_email?: string | null;
+          account_issued_at?: string | null;
+          created_at?: string;
+        };
+        Update: Partial<Database['public']['Tables']['roster_students']['Insert']>;
+        Relationships: [];
+      };
       attitude_flags: {
         Row: {
           id: string;
