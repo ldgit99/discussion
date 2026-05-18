@@ -11,7 +11,7 @@ import { insertAiMessage } from '../insert-message';
  *   - 'evidence_request': 의견 등록 후 근거 요청
  */
 
-export type FacilitationTrigger = 'room_start' | 'next_turn' | 'evidence_request';
+export type FacilitationTrigger = 'room_start' | 'next_turn' | 'evidence_request' | 'respond';
 
 export async function runFacilitation(opts: {
   roomId: string;
@@ -74,5 +74,14 @@ function buildPrompt(
     case 'evidence_request':
       return `방금 한 학생이 의견을 등록했어요: "${ctx?.lastUtterance?.slice(0, 200) ?? ''}"
 "왜 그렇게 생각하나요?" 같은 근거 요구 질문 1개만 만들어라.`;
+
+    case 'respond':
+      return `토의 주제: "${topic}"
+방금 학생 발화: "${ctx?.lastUtterance?.slice(0, 300) ?? ''}"
+
+이 발화에 짧게 반응해라. 1-2문장.
+- 의견을 평가("좋다/맞다/틀리다")하지 마라.
+- 짧게 격려·확인하거나, 토의를 이어가는 가벼운 질문 하나.
+- 예: "잘 들었어요. 다른 친구는 어떻게 생각하세요?" / "그 부분에 대해 좀 더 들려줄 수 있을까요?"`;
   }
 }

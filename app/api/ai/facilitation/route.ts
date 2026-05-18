@@ -6,7 +6,7 @@ import { createAdminClient } from '@/lib/supabase/admin';
 
 const bodySchema = z.object({
   roomId: z.string().uuid(),
-  trigger: z.enum(['room_start', 'next_turn', 'evidence_request']),
+  trigger: z.enum(['room_start', 'next_turn', 'evidence_request', 'respond']),
   nextNickname: z.string().optional(),
   lastUtterance: z.string().optional(),
 });

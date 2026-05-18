@@ -14,6 +14,7 @@ import type { Message } from '@/lib/db/types';
  */
 
 const SILENCE_MINUTES = 3;
+const RESPOND_INTERVAL_MS = 30 * 1000; // AI 자동 응답 30초 빈도
 
 const ATTITUDE_KEYWORDS = ['바보', '멍청', '미친', '꺼져', '닥쳐', '죽어', '쓰레기', '재수없', '한심'];
 
@@ -39,6 +40,8 @@ export function AiTriggers({
   const lastEvidenceRef = useRef<string | null>(null);
   const lastFlaggedRef = useRef<string | null>(null);
   const lastSilenceRef = useRef<number>(0);
+  const lastRespondAtRef = useRef<number>(0);
+  const lastRespondedMessageRef = useRef<string | null>(null);
 
   // 1) 방 첫 진입 시 1회 facilitation
   useEffect(() => {
@@ -126,6 +129,34 @@ export function AiTriggers({
         flaggedMessageText: recent.content,
         flaggedMessageId: recent.id,
         detectedBy: 'keyword',
+      }),
+    }).catch(() => {});
+  }, [teamMessages, roomId]);
+
+  // 5) 학생 발화에 짧은 AI 응답 — 30초 빈도, 마지막 응답한 메시지는 skip
+  useEffect(() => {
+    const utterances = teamMessages.filter((m) => m.message_type === 'utterance');
+    const last = utterances[utterances.length - 1];
+    if (!last) return;
+    if (lastRespondedMessageRef.current === last.id) return;
+
+    // 비방 키워드 감지된 경우는 attitude_check가 우선 → 스킵
+    const lower = last.content.toLowerCase();
+    if (ATTITUDE_KEYWORDS.some((k) => lower.includes(k))) return;
+
+    const now = Date.now();
+    if (now - lastRespondAtRef.current < RESPOND_INTERVAL_MS) return;
+
+    lastRespondedMessageRef.current = last.id;
+    lastRespondAtRef.current = now;
+
+    fetch('/api/ai/facilitation', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        roomId,
+        trigger: 'respond',
+        lastUtterance: last.content,
       }),
     }).catch(() => {});
   }, [teamMessages, roomId]);
