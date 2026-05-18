@@ -25,6 +25,7 @@ type Props = {
     total_students: number;
     num_rooms: number;
     stage: string;
+    class_label?: string | null;
   };
 };
 

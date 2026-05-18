@@ -28,6 +28,7 @@ export type Database = {
           num_rooms: number;
           time_limit_minutes: number | null;
           stage: 'waiting' | 'active' | 'closed';
+          class_label: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -40,6 +41,7 @@ export type Database = {
           num_rooms: number;
           time_limit_minutes?: number | null;
           stage?: 'waiting' | 'active' | 'closed';
+          class_label?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -320,6 +322,7 @@ export type Database = {
           p_total_students: number;
           p_group_size?: number;
           p_time_limit_minutes?: number;
+          p_class_label?: string | null;
         };
         // returns jsonb: { session_id, num_rooms, rooms: [...] }
         Returns: {

@@ -17,11 +17,16 @@ export function NewSessionForm() {
   const [totalStudents, setTotalStudents] = useState(24);
   const [groupSize, setGroupSize] = useState(5);
   const [timeLimit, setTimeLimit] = useState(30);
+  const [grade, setGrade] = useState<number | ''>('');
+  const [classNum, setClassNum] = useState<number | ''>('');
 
   const numRooms = useMemo(
     () => Math.max(1, Math.ceil(totalStudents / groupSize)),
     [totalStudents, groupSize]
   );
+
+  const classLabel =
+    grade && classNum ? `${grade}-${classNum}` : null;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -41,6 +46,7 @@ export function NewSessionForm() {
         p_total_students: totalStudents,
         p_group_size: groupSize,
         p_time_limit_minutes: timeLimit,
+        p_class_label: classLabel,
       });
 
       if (error || !data) {
@@ -65,6 +71,50 @@ export function NewSessionForm() {
     <form onSubmit={handleSubmit} noValidate>
       <Card>
         <CardContent className="p-6 space-y-5">
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-2">
+              <Label htmlFor="grade">학년 (선택)</Label>
+              <select
+                id="grade"
+                value={grade}
+                onChange={(e) =>
+                  setGrade(e.target.value ? Number(e.target.value) : '')
+                }
+                className="flex h-10 w-full rounded-lg border border-neutral-200 bg-neutral-0 px-3 py-2.5 text-base text-neutral-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+              >
+                <option value="">미지정</option>
+                {[1, 2, 3].map((g) => (
+                  <option key={g} value={g}>
+                    {g}학년
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="classnum">반 (선택)</Label>
+              <select
+                id="classnum"
+                value={classNum}
+                onChange={(e) =>
+                  setClassNum(e.target.value ? Number(e.target.value) : '')
+                }
+                className="flex h-10 w-full rounded-lg border border-neutral-200 bg-neutral-0 px-3 py-2.5 text-base text-neutral-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+              >
+                <option value="">미지정</option>
+                {Array.from({ length: 10 }, (_, i) => i + 1).map((c) => (
+                  <option key={c} value={c}>
+                    {c}반
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          {classLabel && (
+            <p className="text-xs text-brand-700">
+              이 수업은 <strong>{classLabel}</strong>반으로 표시됩니다.
+            </p>
+          )}
+
           <div className="space-y-2">
             <Label htmlFor="topic">토의 주제</Label>
             <Input

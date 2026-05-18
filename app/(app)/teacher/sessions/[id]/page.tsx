@@ -21,7 +21,7 @@ export default async function SessionDetailPage({
   const { data: session } = await supabase
     .from('sessions')
     .select(
-      'id, topic, total_students, num_rooms, group_size, stage, time_limit_minutes, created_at'
+      'id, topic, total_students, num_rooms, group_size, stage, time_limit_minutes, class_label, created_at'
     )
     .eq('id', id)
     .eq('teacher_id', user!.id)
@@ -47,7 +47,12 @@ export default async function SessionDetailPage({
       <header className="space-y-3">
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-2">
-            <h1 className="text-2xl font-bold text-neutral-900">{session.topic}</h1>
+            <h1 className="text-2xl font-bold text-neutral-900">
+              {session.class_label && (
+                <span className="text-brand-600 mr-2">{session.class_label}반</span>
+              )}
+              {session.topic}
+            </h1>
             <div className="flex flex-wrap items-center gap-3 text-sm text-neutral-600">
               <Badge variant={badgeVariant(session.stage)}>{stageLabel(session.stage)}</Badge>
               <span className="flex items-center gap-1.5">
