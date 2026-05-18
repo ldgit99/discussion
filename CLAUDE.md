@@ -92,6 +92,7 @@ npm run db:types       # Supabase 타입 재생성 (CLI 연결 필요)
 | **Supabase 프로젝트** | https://supabase.com/dashboard/project/pogrhwokugvmxkoqpedg | ref: `pogrhwokugvmxkoqpedg`, 리전: ap-southeast-1 (싱가포르) |
 | **OpenAI** | https://platform.openai.com | 모델: gpt-4o-mini (`lib/ai/provider.ts`에서 변경 가능) |
 | **Vercel** | https://vercel.com/dashboard | 자동 배포 — main 푸시 시 트리거 |
+| **운영 URL** | **https://discussion-three-pi.vercel.app/** | 2026-05-18 배포 |
 
 ### Supabase 자주 쓰는 페이지
 
