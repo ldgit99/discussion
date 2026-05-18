@@ -28,7 +28,7 @@ export function BoardPanel({ roomId, myUserId }: Props) {
   const { opinions, addOpinion, deleteOpinion } = useOpinionsSync(roomId);
 
   return (
-    <section className="border-r border-neutral-200 bg-neutral-50 flex flex-col min-h-0">
+    <section className="border-r border-neutral-200 bg-neutral-50 flex flex-col min-h-0 h-full overflow-hidden">
       <div className="px-4 py-3 border-b border-neutral-200 text-sm font-medium text-neutral-600 flex items-center gap-2 shrink-0">
         <LayoutGrid className="h-4 w-4" />
         공동 토의 보드

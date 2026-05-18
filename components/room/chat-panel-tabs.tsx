@@ -24,11 +24,11 @@ export function ChatPanelTabs({ roomId, participantId, myNickname, onModeChange 
   }
 
   return (
-    <section className="border-r border-neutral-200 flex flex-col min-h-0">
+    <section className="border-r border-neutral-200 flex flex-col min-h-0 h-full overflow-hidden">
       <Tabs
         value={mode}
         onValueChange={handleChange}
-        className="flex flex-col h-full min-h-0"
+        className="flex flex-col flex-1 min-h-0 overflow-hidden"
       >
         <div className="px-3 pt-3 pb-2 border-b border-neutral-200 bg-neutral-0 shrink-0">
           <TabsList className="grid grid-cols-2 w-full">

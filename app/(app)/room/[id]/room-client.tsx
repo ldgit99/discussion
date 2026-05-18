@@ -62,9 +62,14 @@ export function RoomClient({
       />
 
       {/* 데스크톱: 3분할 그리드 / 태블릿: 2분할 + AI 패널 숨김 / 모바일: 단일 영역 + bottom tab */}
-      <div className="flex-1 grid grid-cols-1 md:grid-cols-[40%_60%] xl:grid-cols-[30%_45%_25%] min-h-0">
+      <div className="flex-1 grid grid-cols-1 md:grid-cols-[40%_60%] xl:grid-cols-[30%_45%_25%] min-h-0 overflow-hidden">
         {/* 좌측 - 채팅 */}
-        <div className={cn('min-h-0', mobileTab === 'chat' ? 'block' : 'hidden md:block')}>
+        <div
+          className={cn(
+            'min-h-0 h-full overflow-hidden',
+            mobileTab === 'chat' ? 'flex flex-col' : 'hidden md:flex md:flex-col'
+          )}
+        >
           <ChatPanelTabs
             roomId={roomId}
             participantId={participant?.id ?? null}
@@ -74,15 +79,20 @@ export function RoomClient({
         </div>
 
         {/* 중앙 - 보드 */}
-        <div className={cn('min-h-0', mobileTab === 'board' ? 'block' : 'hidden md:block')}>
+        <div
+          className={cn(
+            'min-h-0 h-full overflow-hidden',
+            mobileTab === 'board' ? 'flex flex-col' : 'hidden md:flex md:flex-col'
+          )}
+        >
           <BoardPanel roomId={roomId} myUserId={myUserId} />
         </div>
 
         {/* 우측 - AI 패널: 데스크톱(xl)에서만 인라인 노출 / 모바일은 bottom tab 'ai' 활성 시 표시 */}
         <div
           className={cn(
-            'min-h-0',
-            mobileTab === 'ai' ? 'block xl:block' : 'hidden xl:block'
+            'min-h-0 h-full overflow-hidden',
+            mobileTab === 'ai' ? 'flex flex-col xl:flex' : 'hidden xl:flex xl:flex-col'
           )}
         >
           <AIPanel roomId={roomId} opinionIds={opinionIds} mode={mode} />

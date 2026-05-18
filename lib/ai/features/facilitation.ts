@@ -31,7 +31,7 @@ export async function runFacilitation(opts: {
       { role: 'user', content: userPrompt },
     ],
     temperature: 0.5,
-    max_tokens: 200,
+    max_tokens: 120, // 짧은 응답 (1-2문장)
   });
 
   const mod = await moderate(raw);
