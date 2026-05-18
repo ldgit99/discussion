@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { PrintButton } from './print-button';
 import { SessionRealtime } from './session-realtime';
+import { ResearchExportButton } from './research-export';
 
 export default async function SessionDetailPage({
   params,
@@ -67,7 +68,10 @@ export default async function SessionDetailPage({
               )}
             </div>
           </div>
-          <PrintButton />
+          <div className="flex gap-2">
+            <ResearchExportButton sessionId={session.id} topic={session.topic} />
+            <PrintButton />
+          </div>
         </div>
       </header>
 

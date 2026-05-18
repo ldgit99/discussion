@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Plus, GitCompare, GraduationCap } from 'lucide-react';
+import { Plus, GitCompare, GraduationCap, BarChart3 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -70,6 +70,12 @@ export default async function TeacherDashboardPage() {
             <Link href="/teacher/compare">
               <GitCompare className="h-4 w-4" />
               결과 비교
+            </Link>
+          </Button>
+          <Button asChild variant="outline">
+            <Link href="/teacher/analytics">
+              <BarChart3 className="h-4 w-4" />
+              분석
             </Link>
           </Button>
           <Button asChild>
