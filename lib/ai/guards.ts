@@ -107,10 +107,10 @@ export function validateOutput(
     }
   }
 
-  // evidence_check / coaching: 질문 형태 강제 (마지막 의미 부호가 ?)
+  // evidence_check / coaching: 질문 부호(?, ？) 1개 이상 포함되면 OK
+  // (헤더·bullet 등으로 마지막 글자가 ?가 아닌 경우도 허용)
   if (feature === 'evidence_check' || feature === 'coaching') {
-    const trimmed = rawOutput.trim();
-    if (!/[?？]$/.test(trimmed) && !trimmed.includes('?')) {
+    if (!/[?？]/.test(rawOutput)) {
       return { ok: false, reason: 'must_end_with_question' };
     }
   }
