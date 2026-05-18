@@ -9,7 +9,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { MessageBubble } from './team-chat-panel';
-import { ConsentDialog } from './consent-dialog';
 
 type Props = {
   roomId: string;
@@ -74,10 +73,9 @@ export function PersonalChatPanel({ roomId, participantId, myNickname }: Props) 
         <div className="flex items-center gap-2">
           <Lock className="h-4 w-4 text-personal-accent" />
           <Badge variant="personal" className="text-xs">
-            🔒 나만 보이는 공간
+            🔒 선생님과 나만 보는 공간
           </Badge>
         </div>
-        <ConsentDialog roomId={roomId} participantId={participantId} />
       </div>
 
       <ScrollArea className="flex-1 min-h-0">
@@ -132,7 +130,7 @@ function EmptyPersonal() {
     <div className="flex flex-col items-center justify-center text-center py-12 gap-3 text-neutral-600">
       <Sparkles className="h-8 w-8 text-ai-500" />
       <p className="text-sm">AI 코치와 1:1로 생각을 정리할 수 있어요.</p>
-      <p className="text-2xs text-personal-accent">팀에 보이지 않습니다.</p>
+      <p className="text-2xs text-personal-accent">다른 친구에게는 보이지 않아요. 선생님은 볼 수 있어요.</p>
     </div>
   );
 }

@@ -28,7 +28,6 @@ type Props = {
   roomId: string;
   sessionId: string;
   maxParticipants: number;
-  consentedIds: string[]; // 개인 채팅 동의된 participant.id 목록
 };
 
 const SILENCE_WARN_MS = 90 * 1000; // 90초 침묵이면 경고
@@ -37,9 +36,7 @@ export function RoomLiveAnalytics({
   roomId,
   sessionId,
   maxParticipants,
-  consentedIds,
 }: Props) {
-  const consentedSet = useMemo(() => new Set(consentedIds), [consentedIds]);
   const { participants } = useRoomParticipants(roomId);
   const { messages } = useTeamMessages(roomId);
   const { opinions } = useOpinionsSync(roomId);
@@ -208,7 +205,6 @@ export function RoomLiveAnalytics({
                   ...Array.from(utteranceByNickname.values())
                 );
                 const pct = (utterances / maxUtt) * 100;
-                const consented = consentedSet.has(p.id);
                 return (
                   <li key={p.id} className="space-y-1">
                     <div className="flex items-center justify-between gap-2 text-sm">
@@ -219,12 +215,10 @@ export function RoomLiveAnalytics({
                         발화 <strong>{utterances}</strong> · 의견{' '}
                         <strong>{opinionCount}</strong>
                       </span>
-                      {consented && (
-                        <PersonalChatViewer
-                          participantId={p.id}
-                          nickname={p.nickname}
-                        />
-                      )}
+                      <PersonalChatViewer
+                        participantId={p.id}
+                        nickname={p.nickname}
+                      />
                     </div>
                     <div className="h-2 bg-neutral-100 rounded-full overflow-hidden">
                       <div

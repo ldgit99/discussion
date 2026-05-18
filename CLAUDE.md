@@ -219,8 +219,9 @@ discussion/
 
 ### C3. 채팅 가시성 격리 — [research.md §3, §4.2](./research.md)
 - **팀 채널** (`team`): 모둠 전원 + 교사 read.
-- **개인 채널** (`personal:{pid}`): 본인만 실시간 read. 교사는 `personal_chat_consent.teacher_view_allowed=true`인 경우 **사후 RPC**로만.
-- 다른 학생의 개인 채널 실시간 subscribe 금지 (RLS + 클라이언트 가드 둘 다).
+- **개인 채널** (`personal:{pid}`): 본인 + 담당 교사 read. (교실 환경에서 교사가 안전·교육 책임자이므로 모든 활동 모니터링 가능)
+- 다른 학생의 개인 채널은 절대 볼 수 없음 (RLS + 클라이언트 가드 둘 다).
+- 학생 UI에는 **"선생님과 나만 보는 공간"**으로 정직하게 표시 (학생 권리 보호).
 - 개인 채팅 LLM 호출 컨텍스트에 다른 학생 발화·닉네임 포함 금지.
 - 개인 → 팀 전파는 학생 명시 "팀에 공유" 액션만 (`opinions.shared_from_personal=true`).
 

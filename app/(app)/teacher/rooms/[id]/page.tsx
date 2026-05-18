@@ -38,27 +38,7 @@ export default async function TeacherRoomPage({
     time_limit_minutes: number | null;
   };
 
-  // 동의된 개인 채팅 참가자 id 미리 조회 (초기 SSR 데이터)
-  const { data: participants } = await supabase
-    .from('participants')
-    .select('id, role')
-    .eq('room_id', id);
-
-  const studentIds = ((participants ?? []) as { id: string; role: string }[])
-    .filter((p) => p.role === 'student')
-    .map((p) => p.id);
-
-  const { data: consents } =
-    studentIds.length > 0
-      ? await supabase
-          .from('personal_chat_consent')
-          .select('participant_id, teacher_view_allowed')
-          .in('participant_id', studentIds)
-      : { data: [] as { participant_id: string; teacher_view_allowed: boolean }[] };
-
-  const consentedIds = (consents ?? [])
-    .filter((c) => (c as { teacher_view_allowed: boolean }).teacher_view_allowed)
-    .map((c) => (c as { participant_id: string }).participant_id);
+  // 교사는 모든 학생의 개인 채팅을 항상 열람 가능 (동의 절차 제거)
 
   return (
     <main className="px-6 lg:px-8 py-8 max-w-6xl mx-auto space-y-6">
@@ -94,7 +74,6 @@ export default async function TeacherRoomPage({
         roomId={meta.id}
         sessionId={meta.session_id}
         maxParticipants={meta.max_participants}
-        consentedIds={consentedIds}
       />
     </main>
   );

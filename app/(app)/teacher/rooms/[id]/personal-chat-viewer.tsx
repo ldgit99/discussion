@@ -35,7 +35,7 @@ export function PersonalChatViewer({ participantId, nickname }: Props) {
         p_participant_id: participantId,
       });
       if (error) {
-        toast.error('조회가 안 됐어요. 동의 상태를 확인해주세요.');
+        toast.error('조회가 안 됐어요. 잠시 후 다시 시도해주세요.');
         return;
       }
       setMessages((data as Message[]) ?? []);
@@ -62,7 +62,7 @@ export function PersonalChatViewer({ participantId, nickname }: Props) {
         <DialogHeader>
           <DialogTitle>{nickname} 학생의 개인 채팅</DialogTitle>
           <DialogDescription>
-            학생이 교사 열람을 허용한 경우에만 표시됩니다. 토의 종료 후 확인용.
+            이 학생이 AI 코치와 1:1로 나눈 모든 대화입니다. 다른 학생은 볼 수 없습니다.
           </DialogDescription>
         </DialogHeader>
         <ScrollArea className="flex-1 min-h-0 -mx-2">
