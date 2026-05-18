@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Plus } from 'lucide-react';
+import { Plus, GitCompare } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -59,11 +59,19 @@ export default async function TeacherDashboardPage() {
             한 수업을 만들면 모둠 코드가 자동으로 나뉘어요. 반별로 그룹핑됩니다.
           </p>
         </div>
-        <Button asChild>
-          <Link href="/teacher/sessions/new">
-            <Plus className="h-5 w-5" />새 수업 만들기
-          </Link>
-        </Button>
+        <div className="flex gap-2">
+          <Button asChild variant="outline">
+            <Link href="/teacher/compare">
+              <GitCompare className="h-4 w-4" />
+              결과 비교
+            </Link>
+          </Button>
+          <Button asChild>
+            <Link href="/teacher/sessions/new">
+              <Plus className="h-5 w-5" />새 수업 만들기
+            </Link>
+          </Button>
+        </div>
       </header>
 
       {!hasSessions ? (

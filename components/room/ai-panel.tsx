@@ -123,7 +123,7 @@ export function AIPanel({ roomId, opinionIds, mode }: Props) {
   }
 
   return (
-    <aside className="hidden xl:flex flex-col bg-neutral-50 min-h-0 border-l border-neutral-200">
+    <aside className="flex flex-col bg-neutral-50 min-h-0 border-l border-neutral-200 h-full">
       <div className="px-4 py-3 border-b border-neutral-200 text-sm font-medium text-neutral-600 flex items-center gap-2 shrink-0">
         <Sparkles className="h-4 w-4 text-ai-500" />
         AI 보조 패널
