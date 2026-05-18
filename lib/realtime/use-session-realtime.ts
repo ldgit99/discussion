@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import type { ConsensusResult, Participant } from '@/lib/db/types';
 
@@ -11,6 +11,7 @@ import type { ConsensusResult, Participant } from '@/lib/db/types';
 export function useSessionRealtime(sessionId: string | null, roomIds: string[]) {
   const [results, setResults] = useState<ConsensusResult[]>([]);
   const [participants, setParticipants] = useState<Participant[]>([]);
+  const channelKey = useMemo(() => crypto.randomUUID(), []);
 
   useEffect(() => {
     if (!sessionId || roomIds.length === 0) return;
@@ -38,7 +39,7 @@ export function useSessionRealtime(sessionId: string | null, roomIds: string[]) 
     })();
 
     const ch = supabase
-      .channel(`teacher:session:${sessionId}`)
+      .channel(`teacher:session:${sessionId}:${channelKey}`)
       .on(
         'postgres_changes',
         {
@@ -89,7 +90,7 @@ export function useSessionRealtime(sessionId: string | null, roomIds: string[]) 
       mounted = false;
       supabase.removeChannel(ch);
     };
-  }, [sessionId, roomIds.join(',')]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [sessionId, roomIds.join(','), channelKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return { results, participants };
 }

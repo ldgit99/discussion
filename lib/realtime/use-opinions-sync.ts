@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { createClient } from '@/lib/supabase/client';
 import type { Opinion } from '@/lib/db/types';
@@ -8,6 +8,7 @@ import type { Opinion } from '@/lib/db/types';
 export function useOpinionsSync(roomId: string | null) {
   const [opinions, setOpinions] = useState<Opinion[]>([]);
   const [loading, setLoading] = useState(true);
+  const channelKey = useMemo(() => crypto.randomUUID(), []);
 
   useEffect(() => {
     if (!roomId) return;
@@ -27,7 +28,7 @@ export function useOpinionsSync(roomId: string | null) {
     })();
 
     const ch = supabase
-      .channel(`room:${roomId}:opinions`)
+      .channel(`room:${roomId}:opinions:${channelKey}`)
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'opinions', filter: `room_id=eq.${roomId}` },
@@ -52,7 +53,7 @@ export function useOpinionsSync(roomId: string | null) {
       mounted = false;
       supabase.removeChannel(ch);
     };
-  }, [roomId]);
+  }, [roomId, channelKey]);
 
   const addOpinion = useCallback(
     async (content: string, evidence: string) => {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 
 type PresenceState = {
@@ -14,11 +14,12 @@ type PresenceState = {
  */
 export function usePresence(roomId: string | null, myNickname: string | null) {
   const [online, setOnline] = useState<string[]>([]);
+  const channelKey = useMemo(() => crypto.randomUUID(), []);
 
   useEffect(() => {
     if (!roomId || !myNickname) return;
     const supabase = createClient();
-    const ch = supabase.channel(`room:${roomId}:presence`, {
+    const ch = supabase.channel(`room:${roomId}:presence:${channelKey}`, {
       config: { presence: { key: myNickname } },
     });
 
@@ -40,7 +41,7 @@ export function usePresence(roomId: string | null, myNickname: string | null) {
     return () => {
       supabase.removeChannel(ch);
     };
-  }, [roomId, myNickname]);
+  }, [roomId, myNickname, channelKey]);
 
   return { online, count: online.length };
 }

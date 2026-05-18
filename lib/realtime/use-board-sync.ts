@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { createClient } from '@/lib/supabase/client';
 import type { BoardItem } from '@/lib/db/types';
@@ -10,6 +10,7 @@ type BoardType = BoardItem['type'];
 export function useBoardSync(roomId: string | null) {
   const [items, setItems] = useState<BoardItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const channelKey = useMemo(() => crypto.randomUUID(), []);
 
   useEffect(() => {
     if (!roomId) return;
@@ -30,7 +31,7 @@ export function useBoardSync(roomId: string | null) {
     })();
 
     const ch = supabase
-      .channel(`room:${roomId}:board`)
+      .channel(`room:${roomId}:board:${channelKey}`)
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'board_items', filter: `room_id=eq.${roomId}` },
@@ -53,7 +54,7 @@ export function useBoardSync(roomId: string | null) {
       mounted = false;
       supabase.removeChannel(ch);
     };
-  }, [roomId]);
+  }, [roomId, channelKey]);
 
   const upsertItem = useCallback(
     async (type: BoardType, position: number, content: string, existingId?: string) => {

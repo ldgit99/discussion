@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { createClient } from '@/lib/supabase/client';
 import type { Message } from '@/lib/db/types';
@@ -13,6 +13,7 @@ export function usePersonalMessages(roomId: string | null, participantId: string
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const channelName = participantId ? `personal:${participantId}` : null;
+  const channelKey = useMemo(() => crypto.randomUUID(), []);
 
   useEffect(() => {
     if (!roomId || !channelName || !participantId) return;
@@ -34,7 +35,7 @@ export function usePersonalMessages(roomId: string | null, participantId: string
     })();
 
     const ch = supabase
-      .channel(`${channelName}:messages`)
+      .channel(`${channelName}:messages:${channelKey}`)
       .on(
         'postgres_changes',
         {
@@ -57,7 +58,7 @@ export function usePersonalMessages(roomId: string | null, participantId: string
       mounted = false;
       supabase.removeChannel(ch);
     };
-  }, [roomId, channelName, participantId]);
+  }, [roomId, channelName, participantId, channelKey]);
 
   const sendMessage = useCallback(
     async (content: string) => {

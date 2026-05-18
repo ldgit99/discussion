@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { createClient } from '@/lib/supabase/client';
 import type { ConsensusResult } from '@/lib/db/types';
@@ -9,6 +9,7 @@ export function useConsensusSync(roomId: string | null, sessionId: string | null
   const [result, setResult] = useState<ConsensusResult | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const channelKey = useMemo(() => crypto.randomUUID(), []);
 
   useEffect(() => {
     if (!roomId) return;
@@ -28,7 +29,7 @@ export function useConsensusSync(roomId: string | null, sessionId: string | null
     })();
 
     const ch = supabase
-      .channel(`room:${roomId}:consensus`)
+      .channel(`room:${roomId}:consensus:${channelKey}`)
       .on(
         'postgres_changes',
         {
@@ -51,7 +52,7 @@ export function useConsensusSync(roomId: string | null, sessionId: string | null
       mounted = false;
       supabase.removeChannel(ch);
     };
-  }, [roomId]);
+  }, [roomId, channelKey]);
 
   const submit = useCallback(
     async (fields: {

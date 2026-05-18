@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { createClient } from '@/lib/supabase/client';
 import type { Message } from '@/lib/db/types';
@@ -13,6 +13,7 @@ import type { Message } from '@/lib/db/types';
 export function useTeamMessages(roomId: string | null) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
+  const channelKey = useMemo(() => crypto.randomUUID(), []);
 
   useEffect(() => {
     if (!roomId) return;
@@ -36,7 +37,7 @@ export function useTeamMessages(roomId: string | null) {
 
     // 실시간 구독
     const ch = supabase
-      .channel(`room:${roomId}:team:messages`)
+      .channel(`room:${roomId}:team:messages:${channelKey}`)
       .on(
         'postgres_changes',
         {
@@ -63,7 +64,7 @@ export function useTeamMessages(roomId: string | null) {
       mounted = false;
       supabase.removeChannel(ch);
     };
-  }, [roomId]);
+  }, [roomId, channelKey]);
 
   const sendMessage = useCallback(
     async (content: string) => {
