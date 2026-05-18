@@ -167,10 +167,20 @@ function uxErrorMessage(code: unknown): string {
   if (code === 'no_opinions' || code === 'need_at_least_2_opinions') {
     return '먼저 의견 카드를 등록해주세요.';
   }
+  if (
+    code === 'empty_summary' ||
+    code === 'empty_questions' ||
+    code === 'empty_compare' ||
+    code === 'empty_consensus'
+  ) {
+    return '아직 정리할 내용이 부족해요. 의견을 좀 더 나눠보고 시도해주세요.';
+  }
   if (code === 'opinion_not_found') return '대상 의견을 찾을 수 없어요.';
   if (code === 'students_only') return '이 기능은 학생만 사용할 수 있어요.';
   if (code === 'not_participant') return '먼저 모둠에 입장해야 해요.';
   if (code.startsWith('moderation:')) return '부적절한 표현이 감지돼 안내가 어려워요.';
+  if (code.startsWith('low_retention:')) return '원문을 더 살리기 위해 다시 시도해보세요.';
   if (code.startsWith('guard:')) return '잠깐, 안내를 다시 만들어볼게요.';
-  return '지금은 안내가 어려워요. 잠깐 후 다시 눌러주세요.';
+  if (code === 'db_insert') return '저장 중 문제가 생겼어요. 다시 시도해주세요.';
+  return `지금은 안내가 어려워요 (${code}). 잠깐 후 다시 눌러주세요.`;
 }
