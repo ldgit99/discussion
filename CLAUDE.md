@@ -4,6 +4,156 @@
 
 ---
 
+## 다른 컴퓨터에서 작업 이어가기
+
+### 1. 필요한 소프트웨어
+
+| 항목 | 버전 (검증된 환경) |
+|------|-------------------|
+| Node.js | v24+ (테스트: v24.13.1) |
+| npm | v11+ (테스트: v11.8.0) |
+| Git | 최신 |
+| OS | Windows 11 / macOS / Linux 모두 가능 |
+
+### 2. 셋업 절차
+
+```bash
+# 1) 저장소 clone
+git clone https://github.com/ldgit99/discussion.git
+cd discussion
+
+# 2) 의존성 설치 (~40초)
+npm install
+
+# 3) 환경 변수 파일 생성
+cp .env.local.example .env.local
+# 아래 "환경 변수" 섹션 참조하여 값 채우기
+
+# 4) 개발 서버
+npm run dev
+# → http://localhost:3000
+```
+
+### 3. 환경 변수 (`.env.local`)
+
+`.env.local`은 git에 안 올라감 (gitignore). 새 PC에서는 **직접 값을 채워야 함**.
+
+```env
+# Supabase — 이미 만들어진 프로젝트 (아래 외부 서비스 표 참조)
+NEXT_PUBLIC_SUPABASE_URL=https://pogrhwokugvmxkoqpedg.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=    # Dashboard > Settings > API에서 복사
+SUPABASE_SERVICE_ROLE_KEY=         # 같은 페이지에서 복사 (서버 사이드 전용, 절대 공개 금지)
+
+# OpenAI
+OPENAI_API_KEY=                    # platform.openai.com에서 발급 (sk-...로 시작)
+
+# 사이트 URL
+NEXT_PUBLIC_SITE_URL=http://localhost:3000  # 로컬은 이대로. Vercel 배포 후엔 https://...vercel.app
+```
+
+### 4. DB 마이그레이션 적용 상태
+
+Supabase 프로젝트(`pogrhwokugvmxkoqpedg`)에 마이그레이션 #1-#9 **모두 이미 적용됨**. 새 PC에서 추가 작업 불필요.
+
+> 만약 새 Supabase 프로젝트를 만든다면 [`supabase/migrations/`](./supabase/migrations/) 파일을 번호순으로 SQL Editor에서 실행.
+
+### 5. 빌드·검증 명령
+
+```bash
+npx tsc --noEmit       # 타입 체크
+npx next build         # 프로덕션 빌드 검증
+npm run db:types       # Supabase 타입 재생성 (CLI 연결 필요)
+```
+
+---
+
+## 현재 진행 상태 (2026-05-18 기준)
+
+| 항목 | 상태 |
+|------|------|
+| 1주차 — 인증·DB·기본 라우팅 | ✅ 완료 |
+| 2주차 — 실시간 협업 (채팅·의견·보드·결과) | ✅ 완료 |
+| 3주차 — AI 5종 (facilitation·summary·compare·evidence·consensus) | ✅ 완료 |
+| 4주차 — 개인 채팅 + 코칭·질문·태도 + 교사 사후 조회 + CSV + 전체 공유 | ✅ 완료 |
+| DB 마이그레이션 #1-#9 | ✅ 모두 적용 |
+| 로컬 동작 검증 | ✅ 학생·교사 한 사이클 검증됨 (1주차 시점) |
+| Vercel 배포 | 🔄 진행 중 (사용자 액션 단계) |
+| 파일럿 학급 섭외 | 📋 후속 |
+
+빌드 결과: **20개 라우트** (8개 AI API + 12개 페이지) — Middleware 89.1 kB.
+
+---
+
+## 외부 서비스 — 빠른 링크
+
+| 서비스 | URL | 비고 |
+|--------|-----|------|
+| **GitHub** | https://github.com/ldgit99/discussion | main 브랜치 = 운영 |
+| **Supabase 프로젝트** | https://supabase.com/dashboard/project/pogrhwokugvmxkoqpedg | ref: `pogrhwokugvmxkoqpedg`, 리전: ap-southeast-1 (싱가포르) |
+| **OpenAI** | https://platform.openai.com | 모델: gpt-4o-mini (`lib/ai/provider.ts`에서 변경 가능) |
+| **Vercel** | https://vercel.com/dashboard | 자동 배포 — main 푸시 시 트리거 |
+
+### Supabase 자주 쓰는 페이지
+
+- API Keys: https://supabase.com/dashboard/project/pogrhwokugvmxkoqpedg/settings/api
+- SQL Editor: https://supabase.com/dashboard/project/pogrhwokugvmxkoqpedg/sql/new
+- Auth URL Config: https://supabase.com/dashboard/project/pogrhwokugvmxkoqpedg/auth/url-configuration
+- Auth Users: https://supabase.com/dashboard/project/pogrhwokugvmxkoqpedg/auth/users
+- Table Editor: https://supabase.com/dashboard/project/pogrhwokugvmxkoqpedg/editor
+
+---
+
+## 마이그레이션 9개 — 한눈에
+
+| # | 파일 | 핵심 내용 |
+|---|------|----------|
+| 1 | `20260517000001_init_auth_and_rooms.sql` | rooms · participants · personal_chat_consent + role 트리거 + RLS |
+| 2 | `20260517000002_fix_generate_room_code.sql` | generate_room_code: 6자 고정 알파벳 + security definer |
+| 3 | `20260517000003_add_sessions.sql` | sessions 테이블 + create_session_with_rooms RPC + rooms.session_id |
+| 4 | `20260517000004_rewrite_create_session_jsonb.sql` | RPC를 RETURNS JSONB로 (PostgREST 캐시 우회) |
+| 5 | `20260517000005_fix_rls_recursion.sql` | SECURITY DEFINER 헬퍼(is_participant_of_room 등) — 자기참조 RLS 재귀 해소 |
+| 6 | `20260517000006_messages_opinions_board_results.sql` | messages · opinions · board_items · consensus_results |
+| 7 | `20260517000007_simplify_participants_insert.sql` | participants INSERT 정책 헬퍼 캡슐화 (403 해소) |
+| 8 | `20260517000008_messages_ai_feature.sql` | messages.ai_feature 컬럼 (8개 AI 기능 식별) |
+| 9 | `20260518000001_personal_channel_attitude.sql` | attitude_flags + personal 채널 RLS + fetch_personal_chat RPC |
+
+---
+
+## 디렉터리 구조 한눈에
+
+```
+discussion/
+├── app/
+│   ├── (auth)/{login,signup}/         # 비인증 영역
+│   ├── (app)/                         # 인증 필요
+│   │   ├── join/                      # 학생 방 코드 입장
+│   │   ├── room/[id]/                 # 학생 토의방 (3분할 + 결과)
+│   │   └── teacher/                   # 교사 영역
+│   │       ├── rooms/[id]/            # 모둠 상세 (발화량+사후 조회)
+│   │       └── sessions/{new,[id]}/   # 수업 생성·관리·전체 공유
+│   ├── api/ai/                        # 8개 AI Route Handler
+│   ├── auth/callback/                 # Supabase Auth 콜백
+│   ├── design/                        # 디자인 토큰 갤러리
+│   └── layout.tsx                     # 루트 (Pretendard + Sonner)
+├── components/
+│   ├── ui/                            # shadcn (Button, Dialog, Tabs ...)
+│   └── room/                          # 토의방 컴포넌트 (10개+)
+├── lib/
+│   ├── ai/                            # OpenAI provider · 가드 · 5개 기능
+│   ├── realtime/                      # Realtime 훅 9종
+│   ├── supabase/                      # 클라이언트 (browser/server/admin/middleware)
+│   ├── db/types.ts                    # Supabase 타입
+│   └── utils.ts                       # cn 헬퍼
+├── supabase/
+│   ├── migrations/                    # 9개 SQL
+│   └── seed/sample_topics.sql         # 샘플 토의 주제
+├── docs/{user-guide,pilot-prep}.md    # 운영 문서
+├── .claude/{agents,skills}/           # 하네스 — 6 에이전트 + 4 스킬
+└── research.md / plan.md / design.md / CLAUDE.md  # 사양·계획·디자인·작업 가이드
+```
+
+---
+
 ## 하네스: 공동 토의 지원 AI
 
 **트리거:** 토의방, 팀 채팅, 개인 채팅, 의견 카드, 공동 보드, AI 패널, 모둠, 합의, 회원가입, 로그인, Supabase, Realtime, 프롬프트 관련 변경 요청 시 `discussion-orchestrator` 스킬 사용. (단순 질문은 직접 응답.)
@@ -141,3 +291,4 @@
 | 2026-05-17 | 3주차 전체 구현 (3.1.1~3.1.15): OpenAI provider/moderation/guards, 5개 AI 기능(facilitation/summary/compare/evidence-check/consensus-aid), Route Handler 5종, AIPanel·AiTriggers 컴포넌트, messages.ai_feature 컬럼 + 자동 트리거 (room_start, evidence_request) | supabase/migrations/20260517000008, lib/ai/*, lib/supabase/admin.ts, app/api/ai/*, components/room/ai-* | plan.md 3주차 완료 |
 | 2026-05-18 | 4주차 전체 구현 (4.1.1~4.1.18+): 개인 채팅(personal:{pid} 채널), 코칭/질문생성/태도점검 AI 3종, ChatPanelTabs(팀·개인), PersonalChatPanel, ConsentDialog, 자동 트리거 확장(정체 3분·갈등 키워드), AIPanel 모드별 분기, attitude_flags + fetch_personal_chat RPC, 교사 모둠 상세(발화량+사후 조회), 시드 주제 3개, 사용 가이드 + 파일럿 준비 문서 | supabase/migrations/20260518000001, supabase/seed/*, lib/realtime/use-personal-messages, lib/ai/features/{coaching,question-gen,attitude-check}, app/api/ai/{coaching,question-gen,attitude-check}, components/room/{personal-chat-panel,chat-panel-tabs,consent-dialog,team-chat-panel}, components/ui/tabs, app/(app)/teacher/rooms/[id]/*, docs/{user-guide,pilot-prep}.md | plan.md 4주차 완료 + 파일럿 준비 |
 | 2026-05-18 | CSV 내보내기 + 전체 공유 모드 페이지 (학급 결과 한 화면 큼직하게) | app/(app)/teacher/sessions/[id]/{export-buttons,share/page}.tsx | plan.md §4.1.16 완료 |
+| 2026-05-18 | 환경 인계 섹션 추가 (셋업 절차·진행 상태·외부 서비스·마이그레이션 체크리스트·디렉터리 트리) | CLAUDE.md 상단 | 다른 컴퓨터에서 작업 환경 빠른 복원용 |
