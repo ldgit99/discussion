@@ -16,6 +16,8 @@ type Props = {
   myNickname: string;
 };
 
+const COACH_INTERVAL_MS = 30 * 1000; // 자동 코칭 30초 빈도 제한
+
 // design.md §10.1, §10.3 — 개인 모드 채팅 + 팀 공유 액션
 export function PersonalChatPanel({ roomId, participantId, myNickname }: Props) {
   const { messages, loading, sendMessage } = usePersonalMessages(roomId, participantId);
@@ -23,10 +25,32 @@ export function PersonalChatPanel({ roomId, participantId, myNickname }: Props) 
   const [sending, setSending] = useState(false);
   const [sharingId, setSharingId] = useState<string | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
+  const lastCoachAtRef = useRef<number>(0);
+  const lastCoachedMessageRef = useRef<string | null>(null);
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages.length]);
+
+  // 학생이 발화하면 자동으로 AI 코칭 호출 (30초 빈도 제한)
+  useEffect(() => {
+    const utterances = messages.filter((m) => m.message_type === 'utterance');
+    const last = utterances[utterances.length - 1];
+    if (!last) return;
+    if (lastCoachedMessageRef.current === last.id) return;
+
+    const now = Date.now();
+    if (now - lastCoachAtRef.current < COACH_INTERVAL_MS) return;
+
+    lastCoachedMessageRef.current = last.id;
+    lastCoachAtRef.current = now;
+
+    fetch('/api/ai/coaching', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ roomId }),
+    }).catch(() => {});
+  }, [messages, roomId]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
